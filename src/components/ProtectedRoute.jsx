@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom";
 
 function ProtectedRoute({ children }) {
-  if (!localStorage.getItem("access_token")) {
+  if (!localStorage.getItem("token")) {
     return <Navigate to="/" replace />;
   }
 

@@ -9,52 +9,49 @@ const fields = loginFields;
 let fieldsState = {};
 fields.forEach((field) => (fieldsState[field.id] = ""));
 
-// hardcore response
-const signIn = async () => {
-  return {
-    access_token: "efawfda232fadad13r",
-    username: "User",
-    id: 1,
-  };
-};
-
 export default function Login() {
   const [loginState, setLoginState] = useState(fieldsState);
-  // const [dataLogin, setDataLogin] = useState(undefined);
-  // console.log(dataLogin);
+  const [error, setError] = useState(null);
+
+  if (error != null) {
+    alert(error);
+  }
 
   let navigate = useNavigate();
-
-  // useEffect(() => {
-  //   fetch("https://jsonplaceholder.typicode.com/users")
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       setDataLogin(data);
-  //     });
-  // }, []);
-
-  // const handleLogin = () => {
-  //   dataLogin.forEach((data) => {
-  //     if (data.email === loginState["email-address"]) {
-  //       navigate("/dashboard");
-  //       return;
-  //     }
-  //   });
-  // };
 
   const handleChange = (e) => {
     setLoginState({ ...loginState, [e.target.id]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
+    const { email, password } = loginState;
 
-    // handleLogin();
-
-    // hardcode response
-    const result = await signIn();
-    localStorage.setItem("access_token", result.access_token);
-    navigate("/dashboard");
+    fetch(
+      "https://backend2-production-e4eb.up.railway.app/api/v1/users/login",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      }
+    )
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Login failed");
+        }
+      })
+      .then((data) => {
+        console.log(data);
+        localStorage.setItem("token", data.token);
+        setError(null);
+        navigate("/dashboard");
+      })
+      .catch((error) => {
+        console.error(error);
+        setError("Invalid email or password");
+      });
   };
 
   return (
