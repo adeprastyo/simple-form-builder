@@ -4,12 +4,16 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import CreateFormPage from "./pages/CreateFomPage";
+import { useDispatch } from "react-redux";
+import { clearUser } from "./redux/slices/userSlice";
 
 function App() {
   let navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleLogout = async () => {
-    localStorage.removeItem("token");
+    // localStorage.removeItem("token");
+    dispatch(clearUser());
     navigate("/");
   };
 

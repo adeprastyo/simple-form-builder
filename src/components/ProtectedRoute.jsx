@@ -1,7 +1,14 @@
 import { Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function ProtectedRoute({ children }) {
-  if (!localStorage.getItem("token")) {
+  const user = useSelector((state) => {
+    return state.user;
+  });
+
+  console.log(user)
+
+  if (user.token === "") {
     return <Navigate to="/" replace />;
   }
 
