@@ -10,6 +10,7 @@ export default function CreateFormPage() {
   const user = useSelector((state) => {
     return state.user;
   });
+
   const [schema, setSchema] = useState({
     title: "ini adalah title",
     components: [],
@@ -18,6 +19,7 @@ export default function CreateFormPage() {
     setting: "",
     user_id: user.user_id,
   });
+
   const [error, setError] = useState(null);
   let navigate = useNavigate();
 
@@ -31,6 +33,10 @@ export default function CreateFormPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const componentsString = JSON.stringify(schema.components);
+    // console.log(schema.components);
+    // console.log(componentsString);
+
     fetch(
       "https://backend2-production-e4eb.up.railway.app/api/v1/forms/create",
       {
@@ -40,7 +46,8 @@ export default function CreateFormPage() {
           // Authorization: `Bearer ${user.token}`,
           Authorization: user.token,
         },
-        body: JSON.stringify(schema),
+        body: JSON.stringify({ ...schema, components: componentsString }),
+        // body: JSON.stringify(schema),
       }
     )
       .then((response) => {
@@ -77,7 +84,6 @@ export default function CreateFormPage() {
         <FormBuilder form={schema} onChange={handleChange} />
       </div>
       <Footer />
-          
     </>
   );
 }
