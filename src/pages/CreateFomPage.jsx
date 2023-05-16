@@ -11,12 +11,16 @@ export default function CreateFormPage() {
     return state.user;
   });
 
+  const [titleForm, setTitleForm] = useState("");
+
+  const [desc, setDesc] = useState("");
+
   const [schema, setSchema] = useState({
-    title: "ini adalah title",
+    title: titleForm,
     components: [],
     display: "form",
-    description: "ini adalah deskripsi",
-    setting: "",
+    description: desc,
+    settings: "",
     user_id: user.user_id,
   });
 
@@ -27,15 +31,21 @@ export default function CreateFormPage() {
     console.log(error);
   }
 
-  const handleChange = (schemaForm) => {
+  const handleChangeForm = (schemaForm) => {
     setSchema(schemaForm);
+  };
+
+  const handleChangeTitle = (e) => {
+    setTitleForm(e.target.value);
+  };
+
+  const handleChangeDesc = (e) => {
+    setDesc(e.target.value);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const componentsString = JSON.stringify(schema.components);
-    // console.log(schema.components);
-    // console.log(componentsString);
 
     fetch(
       "https://backend2-production-e4eb.up.railway.app/api/v1/forms/create",
@@ -43,11 +53,9 @@ export default function CreateFormPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // Authorization: `Bearer ${user.token}`,
-          Authorization: user.token,
+          Authorization: `Bearer ${user.token}`,
         },
         body: JSON.stringify({ ...schema, components: componentsString }),
-        // body: JSON.stringify(schema),
       }
     )
       .then((response) => {
@@ -71,18 +79,44 @@ export default function CreateFormPage() {
   return (
     <>
       <Navbar />
-      <div className="container p-3 shadow-md">
-        <div className="w-full flex justify-end mt-3 ">
+      <div className="container p-4 shadow-md mt-3 rounded-md">
+        <div className="flex mb-2 p-2">
+          <label className="w-1/6 text-lg font-medium text-slate-600">
+            Judul Form
+          </label>
+          <input
+            onChange={handleChangeTitle}
+            className="w-5/6 shadow-sm appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-blue-200 "
+          />
+        </div>
+        <hr />
+        <div className="flex mb-2 p-2">
+          <label className="w-1/6 text-lg font-medium text-slate-600">
+            Deskripsi
+          </label>
+          <textarea
+            onChange={handleChangeDesc}
+            className="w-5/6 h-24 shadow-sm appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-blue-200 "
+          ></textarea>
+        </div>
+        <hr />
+        <div className="flex-col mb-2 p-2 ">
+          <label className="w-1/6 mb-3 text-lg font-medium text-slate-600">
+            Pilih Komponen
+          </label>
+          <FormBuilder form={schema} onChange={handleChangeForm} />
+        </div>
+        <hr />
+        <div className="w-full flex justify-end mt-3">
           <button
             onClick={handleSubmit}
-            className="bg-green-500 text-white p-2 rounded-md text-sm"
+            className="w-40 h-16 bg-green-500 text-white p-2 rounded-md text-sm mb-2"
           >
             Simpan Form
           </button>
         </div>
-        <hr className="mb-4" />
-        <FormBuilder form={schema} onChange={handleChange} />
       </div>
+
       <Footer />
     </>
   );
