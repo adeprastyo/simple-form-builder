@@ -1,29 +1,28 @@
 import { FormBuilder } from "@formio/react";
 import "../styles/formio.css";
+import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Footer from "../components/Footer";
+import { useSelector } from "react-redux";
 
 export default function CreateFormPage() {
+  const user = useSelector((state) => {
+    return state.user;
+  });
   const [schema, setSchema] = useState({
-    id: 1,
-    title: "string",
+    title: "ini adalah title",
     components: [],
     display: "form",
-    description: "string",
-    setting: "string",
-    user_id: 8,
+    description: "ini adalah deskripsi",
+    setting: "",
+    user_id: user.user_id,
   });
-
-  console.log(schema);
-
   const [error, setError] = useState(null);
-
   let navigate = useNavigate();
 
   if (error != null) {
-    alert(error);
+    console.log(error);
   }
 
   const handleChange = (schemaForm) => {
@@ -36,7 +35,11 @@ export default function CreateFormPage() {
       "https://backend2-production-e4eb.up.railway.app/api/v1/forms/create",
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          // Authorization: `Bearer ${user.token}`,
+          Authorization: user.token,
+        },
         body: JSON.stringify(schema),
       }
     )
@@ -61,7 +64,6 @@ export default function CreateFormPage() {
   return (
     <>
       <Navbar />
-
       <div className="container p-3 shadow-md">
         <div className="w-full flex justify-end mt-3 ">
           <button
@@ -75,6 +77,7 @@ export default function CreateFormPage() {
         <FormBuilder form={schema} onChange={handleChange} />
       </div>
       <Footer />
+          
     </>
   );
 }
