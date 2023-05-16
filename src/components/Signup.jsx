@@ -3,6 +3,8 @@ import { signupFields } from "../constants/formFields";
 import FormAction from "./FormAction";
 import Input from "./Input";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { updateUser } from "../redux/slices/userSlice";
 
 const fields = signupFields;
 let fieldsState = {};
@@ -12,6 +14,7 @@ fields.forEach((field) => (fieldsState[field.id] = ""));
 export default function Signup() {
   const [signupState, setSignupState] = useState(fieldsState);
   const [error, setError] = useState(null);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   if (error != null) {
@@ -43,7 +46,12 @@ export default function Signup() {
       })
       .then((data) => {
         console.log(data);
-        localStorage.setItem("token", data.token);
+        dispatch(
+          updateUser({
+            token: data.token,
+            user_id: data.user_id,
+          })
+        );
         setError(null);
         navigate("/dashboard");
       })
