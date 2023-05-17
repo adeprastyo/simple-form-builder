@@ -35,7 +35,7 @@ const FormPage = () => {
         console.log(data);
         setForms(data);
       });
-  }, []);
+  }, [user.token]);
 
   if (forms === undefined) {
     return <>Loading...</>;
