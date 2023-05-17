@@ -11,17 +11,17 @@ export default function CreateFormPage() {
     return state.user;
   });
 
-  const [titleForm, setTitleForm] = useState("");
+  let userId = user.user_id;
 
+  const [titleForm, setTitleForm] = useState("");
   const [desc, setDesc] = useState("");
 
   const [schema, setSchema] = useState({
-    title: titleForm,
+    title: "",
     components: [],
     display: "form",
-    description: desc,
+    description: "",
     settings: "",
-    user_id: user.user_id,
   });
 
   const [error, setError] = useState(null);
@@ -55,7 +55,13 @@ export default function CreateFormPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${user.token}`,
         },
-        body: JSON.stringify({ ...schema, components: componentsString }),
+        body: JSON.stringify({
+          ...schema,
+          components: componentsString,
+          title: titleForm,
+          description: desc,
+          user_id: userId,
+        }),
       }
     )
       .then((response) => {
