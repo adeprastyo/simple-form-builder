@@ -13,12 +13,7 @@ fields.forEach((field) => (fieldsState[field.id] = ""));
 
 export default function Login() {
   const [loginState, setLoginState] = useState(fieldsState);
-  const [error, setError] = useState(null);
   const dispatch = useDispatch();
-
-  if (error != null) {
-    alert(error);
-  }
 
   let navigate = useNavigate();
 
@@ -54,12 +49,11 @@ export default function Login() {
             user_id: data.user_id,
           })
         );
-        setError(null);
         navigate("/dashboard");
       })
       .catch((error) => {
         console.error(error);
-        setError("Invalid email or password");
+        alert(error);
       });
   };
 
