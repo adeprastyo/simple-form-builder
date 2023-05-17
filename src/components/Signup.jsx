@@ -13,13 +13,8 @@ fields.forEach((field) => (fieldsState[field.id] = ""));
 
 export default function Signup() {
   const [signupState, setSignupState] = useState(fieldsState);
-  const [error, setError] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  if (error != null) {
-    alert(error);
-  }
 
   const handleChange = (e) => {
     setSignupState({ ...signupState, [e.target.id]: e.target.value });
@@ -52,12 +47,11 @@ export default function Signup() {
             user_id: data.user_id,
           })
         );
-        setError(null);
         navigate("/dashboard");
       })
       .catch((error) => {
         console.error(error);
-        setError("Signup failed. Please try again.");
+        alert(error);
       });
   };
 
