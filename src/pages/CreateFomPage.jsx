@@ -11,11 +11,6 @@ export default function CreateFormPage() {
     return state.user;
   });
 
-  let userId = user.user_id;
-
-  const [titleForm, setTitleForm] = useState("");
-  const [desc, setDesc] = useState("");
-
   const [schema, setSchema] = useState({
     title: "",
     components: [],
@@ -24,23 +19,18 @@ export default function CreateFormPage() {
     settings: "",
   });
 
-  const [error, setError] = useState(null);
   let navigate = useNavigate();
-
-  if (error != null) {
-    console.log(error);
-  }
 
   const handleChangeForm = (schemaForm) => {
     setSchema(schemaForm);
   };
 
   const handleChangeTitle = (e) => {
-    setTitleForm(e.target.value);
+    setSchema((old) => ({ ...old, title: e.target.value }));
   };
 
   const handleChangeDesc = (e) => {
-    setDesc(e.target.value);
+    setSchema((old) => ({ ...old, description: e.target.value }));
   };
 
   const handleSubmit = (e) => {
@@ -58,9 +48,7 @@ export default function CreateFormPage() {
         body: JSON.stringify({
           ...schema,
           components: componentsString,
-          title: titleForm,
-          description: desc,
-          user_id: userId,
+          user_id: user.user_id,
         }),
       }
     )
@@ -73,12 +61,11 @@ export default function CreateFormPage() {
       })
       .then((data) => {
         console.log(data);
-        setError(null);
         navigate("/dashboard");
       })
       .catch((error) => {
         console.error(error);
-        setError(error.message);
+        alert(error.message);
       });
   };
 
