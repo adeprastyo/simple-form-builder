@@ -1,43 +1,55 @@
 import { FormBuilder } from "@formio/react";
 import "../styles/formio.css";
+import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Footer from "../components/Footer";
+import { useSelector } from "react-redux";
 
 export default function CreateFormPage() {
-  const [schema, setSchema] = useState({
-    id: 1,
-    title: "string",
-    components: [],
-    display: "form",
-    description: "string",
-    setting: "string",
-    user_id: 8,
+  const user = useSelector((state) => {
+    return state.user;
   });
 
-  console.log(schema);
-
-  const [error, setError] = useState(null);
+  const [schema, setSchema] = useState({
+    title: "",
+    components: [],
+    display: "form",
+    description: "",
+    settings: "",
+  });
 
   let navigate = useNavigate();
 
-  if (error != null) {
-    alert(error);
-  }
-
-  const handleChange = (schemaForm) => {
+  const handleChangeForm = (schemaForm) => {
     setSchema(schemaForm);
+  };
+
+  const handleChangeTitle = (e) => {
+    setSchema((old) => ({ ...old, title: e.target.value }));
+  };
+
+  const handleChangeDesc = (e) => {
+    setSchema((old) => ({ ...old, description: e.target.value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const componentsString = JSON.stringify(schema.components);
+
     fetch(
       "https://backend2-production-e4eb.up.railway.app/api/v1/forms/create",
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(schema),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: JSON.stringify({
+          ...schema,
+          components: componentsString,
+          user_id: user.user_id,
+        }),
       }
     )
       .then((response) => {
@@ -49,31 +61,55 @@ export default function CreateFormPage() {
       })
       .then((data) => {
         console.log(data);
-        setError(null);
         navigate("/dashboard");
       })
       .catch((error) => {
         console.error(error);
-        setError(error.message);
+        alert(error.message);
       });
   };
 
   return (
     <>
       <Navbar />
-
-      <div className="container p-3 shadow-md">
-        <div className="w-full flex justify-end mt-3 ">
+      <div className="container p-4 shadow-md mt-3 rounded-md">
+        <div className="flex mb-2 p-2">
+          <label className="w-1/6 text-lg font-medium text-slate-600">
+            Judul Form
+          </label>
+          <input
+            onChange={handleChangeTitle}
+            className="w-5/6 shadow-sm appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-blue-200 "
+          />
+        </div>
+        <hr />
+        <div className="flex mb-2 p-2">
+          <label className="w-1/6 text-lg font-medium text-slate-600">
+            Deskripsi
+          </label>
+          <textarea
+            onChange={handleChangeDesc}
+            className="w-5/6 h-24 shadow-sm appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-blue-200 "
+          ></textarea>
+        </div>
+        <hr />
+        <div className="flex-col mb-2 p-2 ">
+          <label className="w-1/6 mb-3 text-lg font-medium text-slate-600">
+            Pilih Komponen
+          </label>
+          <FormBuilder form={schema} onChange={handleChangeForm} />
+        </div>
+        <hr />
+        <div className="w-full flex justify-end mt-3">
           <button
             onClick={handleSubmit}
-            className="bg-green-500 text-white p-2 rounded-md text-sm"
+            className="w-40 h-16 bg-green-500 text-white p-2 rounded-md text-sm mb-2"
           >
             Simpan Form
           </button>
         </div>
-        <hr className="mb-4" />
-        <FormBuilder form={schema} onChange={handleChange} />
       </div>
+
       <Footer />
     </>
   );
