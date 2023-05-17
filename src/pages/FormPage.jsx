@@ -45,6 +45,29 @@ const FormPage = () => {
     navigate("/create-form");
   };
 
+  const handleDeleteForm = async (formId) => {
+    try {
+      const response = await fetch(
+        `https://backend2-production-e4eb.up.railway.app/api/v1/forms/delete/${formId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
+      if (response.ok) {
+        console.log("Form deleted successfully");
+        const updatedForms = forms.filter((form) => form.id !== formId);
+        setForms(updatedForms);
+      } else {
+        console.log("Failed to delete form");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div>
       <Navbar />
@@ -83,7 +106,14 @@ const FormPage = () => {
                           <Button size="xs" variant="solid" colorScheme="blue">
                             Edit Form
                           </Button>
-                          <Button size="xs" variant="solid" colorScheme="red">
+                          <Button
+                            onClick={() => {
+                              handleDeleteForm(form.id);
+                            }}
+                            size="xs"
+                            variant="solid"
+                            colorScheme="red"
+                          >
                             Delete Form
                           </Button>
                         </ButtonGroup>
