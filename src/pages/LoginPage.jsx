@@ -7,7 +7,7 @@ export default function LoginPage() {
     <Wrapper>
       <div className="p-10 shadow-2xl rounded-3xl">
         <Header
-          heading="LOGIN"
+          heading="LOGINN"
           paragraph="Don't have an account? "
           linkName="Register"
           linkUrl="/signup"
